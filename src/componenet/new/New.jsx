@@ -67,7 +67,7 @@ import { useNavigate } from 'react-router-dom';
         numAffiliationCNOPS: "",
         numImmatriculationCNOPS: "",
         dateAffiliationCNOPS: "",
-      },
+      }
     });
   
   const handleChange = (e) => { //Cette fonction est appelée chaque fois qu'un champ du formulaire est modifié.

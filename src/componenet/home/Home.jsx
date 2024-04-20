@@ -5,6 +5,7 @@ import "./home.scss";
 import Widget from '../../composantes/widget/Widget';
 
 import Table from '../../composantes/table/Table';
+import axios from 'axios';
 export const Home = () => {
   
   return (
@@ -18,7 +19,7 @@ export const Home = () => {
          </div>
          <div className="listContainer">
            <div className="listTitle">
-            Liste des utiliseurs :
+            Liste des utilisateurs :
            </div>
           <Table/>
 
