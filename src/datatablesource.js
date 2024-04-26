@@ -27,21 +27,46 @@ export const userColumns = [
       
     },
   ];
+  export const userColumns2 = [
+    { field: "cin",
+     headerName: "cin", 
+     width: 100 
+    },
+    {
+      field: "type",
+      headerName: "type d'absence",
+      width: 150,
+    
+    },
+    {
+      field: "nbrjours",
+      headerName: "nombre de jours",
+      width: 230,
+    },
   
-  /*temporary data
+    {
+      field: "nbrjourdeduire",
+      headerName: "nombre à déduire",
+      width: 150,
+    },
+    {
+      field: "nbrjournepasdeduire",
+      headerName: "nombre à ne pas déduire",
+      width: 160,
+      
+    },
+  ];
+  
+ 
+
+  
   export const userRows = [
     {
-      CIN: "jb64651",
-      utilisateur: "Snow",
-      status: "admin",
-      email: "1snow@gmail.com",
-      telephone: "06786873523",
-    },  {
-        CIN: "Jb656551",
-        utilisateur: "fatim",
-        status: "ingenieure",
-        email: "fatifleur@gmail.com",
-        telephone: "06786873523",
+      cin: "jb64651",
+      type: "maladie",
+      nbrjours: "5",
+      nbrjourdeduire: "10",
+      nbrjournepasdeduire: "20",
       }
-  ];*/
+  ];
   

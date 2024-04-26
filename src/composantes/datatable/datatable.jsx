@@ -1,7 +1,7 @@
 import "./datatable.scss";
 import { DataGrid } from "@mui/x-data-grid";
 import { userColumns, userRows } from "../../datatablesource";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PreviewIcon from '@mui/icons-material/Preview';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -11,7 +11,6 @@ import axios from "axios";
 
 const Datatable = () => {
   const [data, setData] = useState([]); //declarer que data aura les donnes des users 
-
   useEffect(() => {
     loadData(); //gets data
   }, []);
@@ -37,6 +36,15 @@ const Datatable = () => {
       console.error("Erreur lors de la suppression :", error);
     } 
   };
+  const navigate = useNavigate();
+
+  const handleViewDetails = (cin) => {
+    navigate(`/users/${cin}`);
+  };
+  const handleEditDetails = (cin) => {
+    navigate(`/users/Edit/${cin}`);
+  };
+
 
   const actionColumn = [
     {
@@ -46,17 +54,20 @@ const Datatable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-            <Link to="/users/test" style={{ textDecoration: "none" }}>
-              <div className="viewButton"><PreviewIcon /></div>
-            </Link>
+          <div className="viewButton" onClick={() => handleViewDetails(params.row.cin)}>
+              <PreviewIcon />
+            </div>
+            
             <div className="deleteButton"
               onClick={() => handleDelete(params.row.cin)}
             >
               <DeleteIcon />
             </div>
-            <Link to="/users/form" style={{ textDecoration: "none" }} >
-              <div className="editButton" ><ModeEditIcon /></div>
-            </Link>
+
+            <div className="editButton" onClick={() => handleEditDetails(params.row.cin)}>
+            <ModeEditIcon />
+            </div>
+           
 
           </div>
         );
@@ -77,6 +88,7 @@ const Datatable = () => {
         rowsPerPageOptions={[9]} //Options pour le nombre d'éléments par page. Dans ce cas, seulement l'option 9 est disponible
         checkboxSelection
       />
+  
     </div>
   );
 };

@@ -10,6 +10,11 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import marocLogo from './maroclogo.jpg';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import QueryBuilderIcon from '@mui/icons-material/QueryBuilder';
+
+
 
 
 
@@ -41,8 +46,28 @@ export const Sidebar = () => {
           </li>
           <p className='title'>SERVICE</p>
           <li>
-             <ForwardToInboxIcon className='icon'/>
+           <ForwardToInboxIcon className='icon'/> 
+           <Link to="/users"  style={{ textDecoration: "none" }}>  
             <span>Demandes d'absences</span>
+           </Link>
+          </li>
+          <li>
+           <QueryBuilderIcon className='icon'/> 
+           <Link to="/Demandes/Absence"  style={{ textDecoration: "none" }}>  
+            <span>Demandes d'absences</span>
+           </Link>
+          </li>
+          <li>
+           <CheckCircleIcon className='icon'/> 
+           <Link to="/users"  style={{ textDecoration: "none" }}>  
+            <span>Demandes acceptées</span>
+           </Link>
+          </li>
+          <li>
+           <CancelIcon className='icon'/> 
+           <Link to="/users"  style={{ textDecoration: "none" }}>  
+            <span>Demandes refusées</span>
+           </Link>
           </li>
           <li>
             <FeedIcon className='icon'/>

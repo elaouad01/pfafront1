@@ -6,58 +6,9 @@
     flex: 6;
   }
   
-  .bottom {
-    padding: 20px;
-    display: flex;
-    gap: 20px;
-    box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-    margin: 10px 20px;
-  }
 
-  .info {
-    .item {
-      display: flex;
-      gap: 20px;
-    }
 
-    .details {
-      .title {
-        font-size: 20px;
-        color: #555;
-        margin-bottom: 25px;
-      }
 
-      .detailItem {
-        margin-bottom: 10px;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        
-        .itemKey {
-          font-weight: bold;
-          color: gray;
-          margin-right: 5px;
-        }
 
-        .itemValue {
-          font-weight: 300;
-          color: #333;
-        }
-      }
-    }
 
-    .subTitle {
-      font-size: 13px;
-      color: goldenrod;
-      margin-bottom: 20px;
-      margin-top: 10px;
-    }
-  }
-
-  .title {
-    font-size: 16px;
-    color: #7451f8;
-    margin-bottom: 20px;
-    margin-top: 10px;
-  }
 }
