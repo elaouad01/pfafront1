@@ -6,8 +6,33 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { DataGrid } from "@mui/x-data-grid";
+import { userColumns, userRows } from "../../datatablesource";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import PreviewIcon from '@mui/icons-material/Preview';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import axios from "axios";
+
 import "./table.scss";
 export const List = () => {
+  const [data, setData] = useState([]); //declarer que data aura les donnes des users 
+
+  useEffect(() => {
+    loadData(); //gets data
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/info/displayAll");
+      setData(response.data);//mettre a jour data avec donnes escupere
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
     const rows = [
         {
          CIN:"jb123232",
@@ -28,36 +53,21 @@ export const List = () => {
             status:"fonctionnaire",
         }];
   return (
-    <TableContainer component={Paper} className="table">
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell className="tableCell">CIN</TableCell>
-            <TableCell className="tableCell">Nom</TableCell>
-            <TableCell className="tableCell">Prenom</TableCell>
-            <TableCell className="tableCell">Sexe</TableCell>
-            <TableCell className="tableCell">Numero telephone</TableCell>
-            <TableCell className="tableCell">email</TableCell>
-            <TableCell className="tableCell">Status</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.CIN}>
-              <TableCell className="tableCell">{row.CIN}</TableCell>
-              <TableCell className="tableCell">{row.Nom}</TableCell>
-              <TableCell className="tableCell">{row.Prenom}</TableCell>
-              <TableCell className="tableCell">{row.Sexe}</TableCell>
-              <TableCell className="tableCell">{row.Numero_telephone}</TableCell>
-              <TableCell className="tableCell">{row.email}</TableCell>
-              <TableCell className="tableCell">
-                <span className={`status ${row.status}`}>{row.status}</span>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  )
+
+     
+      <div className="datatable"> 
+
+        <DataGrid className="datagrid"//affiche les donnees dans une grille 
+          rows={data}
+          columns={userColumns} //les collonees a affiche sont usercolumns
+          getRowId={(row) => row.cin} // obtenir l'identifiant unique de chaque ligne de données dans la grille. Dans ce cas, l'identifiant unique est extrait du champ cin de l'objet de données de chaque ligne
+          pageSize={9} //Nombre d'éléments à afficher par page dans la grille
+          rowsPerPageOptions={[9]} //Options pour le nombre d'éléments par page. Dans ce cas, seulement l'option 9 est disponible
+          checkboxSelection
+        />
+      </div>
+    );
+
+
 }
 export default List;

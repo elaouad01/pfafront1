@@ -1,266 +1,312 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import "./form.scss";
 import Sidebar from "../../composantes/sidebar/Sidebar";
 import Navbar from "../../composantes/navbar/Navbar";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 
 const Form = () => {
+  let navigate = useNavigate();
 
-  const initialValues = {
-    prenom: '',
-    nom: '',
-    cin: '',
-    sexe: '',
-    dateNaissance: '',
-    lieuNaissance: '',
-    adresse: '',
-    numeroTel: '',
-    email: '',
-    situationFamiliale: '',
-    dateMariage: '',
-    nombreEnfants: '',
-    conjoints: [{ nomConjoint: '' }],
-    enfants: [{ prenom: '', nomMere: '', dateNaissance: '' }],
-    InfoAdministratives: {
-      ppr: '',
-      pb: '',
-      dateRecrutement: '',
-      diplomeRecrutement: '',
-      administrationRecrutement: '',
-      dateTitularisation: '',
-      grade: '',
-      echelle: '',
-      echelon: '',
-      indice: '',
-      statutAdministratif: '',
-      situationAdministrative: ''
+  const { userId } = useParams();
+
+  const [user, setUser] = useState({
+    cin: "",
+    nom: "",
+    prenom: "",
+    sexe: "",
+    dateNaissance: "",
+    lieuNaissance: "",
+    adresse: "",
+    numeroTel: "",
+    email: "",
+    infoFamiliales: {
+      nomPere: "",
+      nomMere: "",
+      situationFamiliale: "",
+      dateMariage: "",
+      nomConjoint: "",
+      cinConjoint: "",
+      dateNaissanceConjoint: "",
+      fonctionConjoint: "",
+      nombreEnfants: "",
+      conjoints: [],
+      enfants: [],
     },
-    InfoPrevoyanceSociale: {
-      organismePrevoyanceSociale: '',
-      numAffiliationCNOPS: '',
-      numImmatriculationCNOPS: '',
-      dateAffiliationCNOPS: ''
+    infoAdministratives: {
+      ppr: "",
+      pb: "",
+      dateRecrutement: "",
+      diplomeRecrutement: "",
+      administrationRecrutement: "",
+      dateTitularisation: "",
+      grade: "",
+      echelle: "",
+      echelon: "",
+      indice: "",
+      statutAdministratif: "",
+      situationAdministrative: ""
     },
-    OrganismesSociales: {
-      numAffiliationFondationHassan2: ''
+    infoPrevoyanceSociale: {
+      organismePrevoyanceSociale: "",
+      numAffiliationCNOPS: "",
+      numImmatriculationCNOPS: "",
+      dateAffiliationCNOPS: ""
     },
-    InfoRetraite: {
-      organismeRetraite: '',
-      numeroAffiliationRetraite: '',
-      dateAffiliationRetraite: ''
-    },
-    InfoAssurance: {
-      organismeAssurance: '',
-      numeAffiliationAssurance: ''
-    },
-    Sanctions: [{ Sanction: '', nature: '', motif: '', dateSanction: '' }],
-    DocumentsPiecesJointes: [{ nom: '', cheminStockage: '', type: '' }]
+    sanctions: [{
+      sanction: "",
+      nature: "",
+      motif: "",
+      dateSanction: ""
+    }]
+  });
+
+  useEffect(() => {
+    loadUser()
+  }, []);
+
+  const onInputChange = (e) => {
+    const { name, value } = e.target;
+    setUser(prevUser => {
+      const updatedUser = { ...prevUser };
+
+      // Gestion des champs imbriqués
+      const keys = name.split('.');
+      const lastKeyIndex = keys.length - 1;
+
+      keys.reduce((acc, currentKey, index) => {
+        if (index === lastKeyIndex) {
+          acc[currentKey] = value;
+        } else {
+          acc[currentKey] = { ...acc[currentKey] };
+        }
+        return acc[currentKey];
+      }, updatedUser);
+
+      return updatedUser;
+    });
+  };
+  const handleArrayChange = (index, name, e) => {
+    const { value } = e.target;
+    const newArray = [...user[name]];
+    newArray[index][e.target.name] = value;
+    setUser({ ...user, [name]: newArray });
+  };
+  const handleAddItem = (name) => {
+    setUser({ ...user, [name]: [...user[name], {}] });
   };
 
-  return (
-    <div className='new'>
-      <Sidebar />
-      <div className="newContainer">
-        <Navbar />
-        <h1>Modifier un nouveau utilisateur :</h1>
-        <div className='bottom'>
-          <form>
-            <div className='info'>
-              <div className='item'>
+  const handleRemoveItem = (name, index) => {
+    const newArray = [...user[name]];
+    newArray.splice(index, 1);
+    setUser({ ...user, [name]: newArray });
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result =await axios.put(`http://localhost:8080/api/info/update/${userId}`, user);
+      console.log(result.data);
+      alert('Données mises à jour avec succès !');
+      navigate("/users");
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour des données:', error);
+      alert('Une erreur s\'est produite lors de la mise à jour des données. Veuillez réessayer.');    }
+  };
+
+  const loadUser = async () => {
+    try {
+      const result = await axios.get(`http://localhost:8080/api/info/displayById/${userId}`);
+      setUser(result.data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données:', error);
+    }
+  };
+
+ 
+    return (
+      <div className='new'>
+        <Sidebar />
+        <div className="newContainer">
+          <Navbar />
+          <div className='bottom'>
+            <form onSubmit={onSubmit}>
+              <h1>Modifier les informations de l'utilisateur :</h1>
+              <div className='info'>
                 <div className="details">
                   <h1 className='title'>Information Personnelle:</h1>
                   <div className="detailItem">
                     <label className="itemKey">Prénom:</label>
-                    <input type="text" name="prenom" value={initialValues.prenom} />
+                    <input type="text" name="prenom" value={user.prenom} onChange={onInputChange} />
                   </div>
                   <div className="detailItem">
                     <label>Nom:</label>
-                    <input type="text" name="nom" value={initialValues.nom} />
+                    <input type="text" name="nom" value={user.nom} onChange={onInputChange} />
                   </div>
                   <div className="detailItem">
                     <label>CIN:</label>
-                    <input type="text" name="cin" value={initialValues.cin} />
+                    <input type="text" name="cin" value={user.cin} onChange={onInputChange} />
                   </div>
                   <div className="detailItem">
                     <label>Sexe:</label>
-                    <input type="text" name="sexe" value={initialValues.sexe} />
+                    <input type="text" name="sexe" value={user.sexe} onChange={onInputChange} />
                   </div>
                   <div className="detailItem">
                     <label>Date de naissance:</label>
-                    <input type="text" name="dateNaissance" value={initialValues.dateNaissance} />
+                    <input type="date" name="dateNaissance" value={user.dateNaissance} onChange={onInputChange} />
                   </div>
                   <div className="detailItem">
                     <label>Lieu de naissance:</label>
-                    <input type="text" name="lieuNaissance" value={initialValues.lieuNaissance} />
+                    <input type="text" name="lieuNaissance" value={user.lieuNaissance} onChange={onInputChange} />
                   </div>
                   <div className="detailItem">
                     <label>Adresse:</label>
-                    <input type="text" name="adresse" value={initialValues.adresse} />
+                    <input type="text" name="adresse" value={user.adresse} onChange={onInputChange} />
                   </div>
                   <div className="detailItem">
-                    <label>Téléphone:</label>
-                    <input type="text" name="numeroTel" value={initialValues.numeroTel} />
+                    <label>Numéro de téléphone:</label>
+                    <input type="text" name="numeroTel" value={user.numeroTel} onChange={onInputChange} />
                   </div>
                   <div className="detailItem">
                     <label>Email:</label>
-                    <input type="email" name="email" value={initialValues.email} />
+                    <input type="text" name="email" value={user.email} onChange={onInputChange} />
                   </div>
                 </div>
+  
+                {/* Informations Familiales */}
+                <div className="details">
+                  <h1 className='title'>Informations Familiales:</h1>
+                  <div className="detailItem">
+                    <label>Nom de père :</label>
+                    <input type="text" name="infoFamiliales.nomPere" value={user.infoFamiliales.nomPere} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Nom de la mère:</label>
+                    <input type="text" name="infoFamiliales.nomMere" value={user.infoFamiliales.nomMere} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Situation Familiale:</label>
+                    <input type="text" name="infoFamiliales.situationFamiliale" value={user.infoFamiliales.situationFamiliale} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Date de mariage:</label>
+                    <input type="date" name="infoFamiliales.dateMariage" value={user.infoFamiliales.dateMariage} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Nom du conjoint :</label>
+                    <input type="text" name="infoFamiliales.nomConjoint" value={user.infoFamiliales.nomConjoint} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>CIN du conjoint :</label>
+                    <input type="text" name="infoFamiliales.cinConjoint" value={user.infoFamiliales.cinConjoint} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Date de naissance du conjoint :</label>
+                    <input type="date" name="infoFamiliales.dateNaissanceConjoint" value={user.infoFamiliales.dateNaissanceConjoint} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Fonction du conjoint :</label>
+                    <input type="text" name="infoFamiliales.fonctionConjoint" value={user.infoFamiliales.fonctionConjoint} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Nombre d'enfants :</label>
+                    <input type="text" name="infoFamiliales.nombreEnfants" value={user.infoFamiliales.nombreEnfants} onChange={onInputChange} />
+                  </div>
+                </div>
+  
+                {/* Informations Administratives */}
+                <div className="details">
+                  <h1 className='title'>Informations Administratives:</h1>
+                  <div className="detailItem">
+                    <label>PPR :</label>
+                    <input type="text" name="infoAdministratives.ppr" value={user.infoAdministratives.ppr} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>PB :</label>
+                    <input type="text" name="infoAdministratives.pb" value={user.infoAdministratives.pb} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Date de recrutement :</label>
+                    <input type="date" name="infoAdministratives.dateRecrutement" value={user.infoAdministratives.dateRecrutement} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Diplôme de recrutement :</label>
+                    <input type="text" name="infoAdministratives.diplomeRecrutement" value={user.infoAdministratives.diplomeRecrutement} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Administration de recrutement :</label>
+                    <input type="text" name="infoAdministratives.administrationRecrutement" value={user.infoAdministratives.administrationRecrutement} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Date de titularisation :</label>
+                    <input type="date" name="infoAdministratives.dateTitularisation" value={user.infoAdministratives.dateTitularisation} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Grade :</label>
+                    <input type="text" name="infoAdministratives.grade" value={user.infoAdministratives.grade} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Echelle :</label>
+                    <input type="text" name="infoAdministratives.echelle" value={user.infoAdministratives.echelle} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Echelon :</label>
+                    <input type="text" name="infoAdministratives.echelon" value={user.infoAdministratives.echelon} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Indice :</label>
+                    <input type="text" name="infoAdministratives.indice" value={user.infoAdministratives.indice} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Statut administratif :</label>
+                    <input type="text" name="infoAdministratives.statutAdministratif" value={user.infoAdministratives.statutAdministratif} onChange={onInputChange} />
+                  </div>
+                </div>
+  
+                {/* Informations de Prévoyance Sociale */}
+                <div className="details">
+                  <h1 className='title'>Informations de Prévoyance Sociale:</h1>
+                  <div className="detailItem">
+                    <label>Numéro d'affiliation CNOPS :</label>
+                    <input type="text" name="infoPrevoyanceSociale.numAffiliationCNOPS" value={user.infoPrevoyanceSociale.numAffiliationCNOPS} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Numéro d'immatriculation CNOPS :</label>
+                    <input type="text" name="infoPrevoyanceSociale.numImmatriculationCNOPS" value={user.infoPrevoyanceSociale.numImmatriculationCNOPS} onChange={onInputChange} />
+                  </div>
+                  <div className="detailItem">
+                    <label>Date d'affiliation CNOPS :</label>
+                    <input type="date" name="infoPrevoyanceSociale.dateAffiliationCNOPS" value={user.infoPrevoyanceSociale.dateAffiliationCNOPS} onChange={onInputChange} />
+                  </div>
+                </div>
+  
+                {/* Sanctions */}
+                <div className="details">
+                  <h1 className='title'>Sanctions:</h1>
+                  {user.sanctions.map((sanction, index) => (
+                    <div key={index} className="detailItem">
+                      <label>Sanction :</label>
+                      <input type="text" name="sanction" value={sanction.sanction} onChange={(e) => handleArrayChange(index, "sanctions", e)} />
+                      <label>Nature :</label>
+                      <input type="text" name="nature" value={sanction.nature} onChange={(e) => handleArrayChange(index, "sanctions", e)} />
+                      <label>Motif :</label>
+                      <input type="text" name="motif" value={sanction.motif} onChange={(e) => handleArrayChange(index, "sanctions", e)} />
+                      <label>Date de sanction :</label>
+                      <input type="date" name="dateSanction" value={sanction.dateSanction} onChange={(e) => handleArrayChange(index, "sanctions", e)} />
+                      <button type="button" onClick={() => handleRemoveItem("sanctions", index)}>Supprimer</button>
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => handleAddItem("sanctions")}>Ajouter une sanction</button>
+                </div>
+  
+                <button type="submit" className="submitButton">Mettre à jour</button>
               </div>
-              {/* Informations Familiales */}
-              <div className="details">
-                <h1 className='title'>Informations Familiales:</h1>
-                <div className="detailItem">
-                  <label>Situation Familiale:</label>
-                  <input type="text" name="situationFamiliale" />
-                </div>
-                <div className="detailItem">
-                  <label>Date de Mariage:</label>
-                  <input type="text" name="dateMariage" />
-                </div>
-                <div className="detailItem">
-                  <label>Nombre d'Enfants:</label>
-                  <input type="text" name="nombreEnfants" />
-                </div>
-               {/* Informations Familiales */}
-<div className="details">
-  <h1 className='title'>Informations Familiales:</h1>
-  <div className="detailItem">
-    <label>Situation Familiale:</label>
-    <input type="text" name="situationFamiliale" />
-  </div>
-  <div className="detailItem">
-    <label>Date de Mariage:</label>
-    <input type="text" name="dateMariage" />
-  </div>
-  <div className="detailItem">
-    <label>Nombre d'Enfants:</label>
-    <input type="text" name="nombreEnfants" />
-  </div>
-  {initialValues.conjoints.map((conjoint, index) => (
-    <div key={index}>
-      <h4 className="subTitle">Conjoint {index + 1}:</h4>
-      <div className="details">
-        <div className="detailItem">
-          <label>Nom du Conjoint:</label>
-          <input type="text" name={`conjoint${index}`} />
-        </div>
-      </div>
-    </div>
-  ))}
-  {initialValues.enfants.map((enfant, index) => (
-    <div key={index}>
-      <h4 className="subTitle">Enfant {index + 1}:</h4>
-      <div className="details">
-        <div className="detailItem">
-          <label>Prénom de l'Enfant:</label>
-          <input type="text" name={`enfantPrenom${index}`} />
-        </div>
-        <div className="detailItem">
-          <label>Nom de la Mère:</label>
-          <input type="text" name={`enfantNomMere${index}`} />
-        </div>
-        <div className="detailItem">
-          <label>Date de Naissance:</label>
-          <input type="text" name={`enfantDateNaissance${index}`} />
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
-
-{/* Informations Administratives */}
-<div className="details">
-  <h1 className='title'>Informations Administratives:</h1>
-  <div className="detailItem">
-    <label>Point de Présence Réseau (PPR):</label>
-    <input type="text" name="ppr" />
-  </div>
-  <div className="detailItem">
-    <label>Point de Branchement (PB):</label>
-    <input type="text" name="pb" />
-  </div>
-  <div className="detailItem">
-    <label>Date de Recrutement:</label>
-    <input type="text" name="dateRecrutement" />
-  </div>
-  <div className="detailItem">
-    <label>Diplôme de Recrutement:</label>
-    <input type="text" name="diplomeRecrutement" />
-  </div>
-  <div className="detailItem">
-    <label>Administration de Recrutement:</label>
-    <input type="text" name="administrationRecrutement" />
-  </div>
-  <div className="detailItem">
-    <label>Date de Titularisation:</label>
-    <input type="text" name="dateTitularisation" />
-  </div>
-  <div className="detailItem">
-    <label>Grade:</label>
-    <input type="text" name="grade" />
-  </div>
-  <div className="detailItem">
-    <label>Échelle:</label>
-    <input type="text" name="echelle" />
-  </div>
-  <div className="detailItem">
-    <label>Échelon:</label>
-    <input type="text" name="echelon" />
-  </div>
-  <div className="detailItem">
-    <label>Indice:</label>
-    <input type="text" name="indice" />
-  </div>
-  <div className="detailItem">
-    <label>Statut Administratif:</label>
-    <input type="text" name="statutAdministratif" />
-  </div>
-  <div className="detailItem">
-    <label>Situation Administrative:</label>
-    <input type="text" name="situationAdministrative" />
-  </div>
- </div>
-
- {/* Informations Prévoyance Sociale */}
-<div className="details">
-  <h1 className='title'>Informations Prévoyance Sociale:</h1>
-  <div className="detailItem">
-    <label>Organisme de Prévoyance Sociale:</label>
-    <input type="text" name="organismePrevoyanceSociale" />
-  </div>
-  <div className="detailItem">
-    <label>Numéro d'Affiliation CNOPS:</label>
-    <input type="text" name="numAffiliationCNOPS" />
-  </div>
-  <div className="detailItem">
-    <label>Numéro d'Immatriculation CNOPS:</label>
-    <input type="text" name="numImmatriculationCNOPS" />
-  </div>
-  <div className="detailItem">
-    <label>Date d'Affiliation CNOPS:</label>
-    <input type="text" name="dateAffiliationCNOPS" />
-  </div>
-</div>
-<div className="details">
-  <h1 className='title'>Sanctions:</h1>
-  {initialValues.sanctions && initialValues.sanctions.map((sanction, index) => (
-  <div key={index} className="detailItem">
-    <label>Sanction {index + 1}:</label>
-    <input type="text" name={`sanction${index}`} />
-  </div>
-))}
-
- </div>
-          <button type="submit">Enregistrer</button>
+            </form>
           </div>
-          </div>
-          </form>
         </div>
       </div>
-    </div>
-   
-  );
+    );
+  
 };
 
- 
 export default Form;
