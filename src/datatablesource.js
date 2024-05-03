@@ -28,10 +28,21 @@ export const userColumns = [
     },
   ];
   export const userColumns2 = [
-    { field: "cin",
-     headerName: "cin", 
-     width: 100 
+
+
+    {
+      field: "code",
+      headerName: "code",
+      width: 150,
+    
     },
+    {
+      field: "toncin",
+      headerName: "cin",
+      width: 150,
+    
+    },
+
     {
       field: "type",
       headerName: "type d'absence",
@@ -39,34 +50,26 @@ export const userColumns = [
     
     },
     {
-      field: "nbrjours",
-      headerName: "nombre de jours",
+      field: "datededepart",
+      headerName: "date de depart",
       width: 230,
     },
   
     {
-      field: "nbrjourdeduire",
-      headerName: "nombre à déduire",
+      field: "cinramplacant",
+      headerName: "cin remplacant",
       width: 150,
     },
     {
-      field: "nbrjournepasdeduire",
-      headerName: "nombre à ne pas déduire",
-      width: 160,
-      
+      field: "status",
+      headerName: "status",
+      width: 150,
     },
+  
   ];
   
  
 
   
-  export const userRows = [
-    {
-      cin: "jb64651",
-      type: "maladie",
-      nbrjours: "5",
-      nbrjourdeduire: "10",
-      nbrjournepasdeduire: "20",
-      }
-  ];
+
   

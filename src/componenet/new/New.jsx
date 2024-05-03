@@ -57,9 +57,11 @@ const New = () => {
       echelle: "",
       echelon: "",
       indice: "",
-      statutAdministratif: ""
+      statutAdministratif: "",
+      situationAdministrative: "en_fonction"
     },
     infoPrevoyanceSociale: {
+      organismePrevoyanceSociale:"MutuelleGeneral",
       numAffiliationCNOPS: "",
       numImmatriculationCNOPS: "",
       dateAffiliationCNOPS: ""
@@ -68,7 +70,7 @@ const New = () => {
       numAffiliationFondationHassan2: ""
     },
     infoRetraite: {
-      organismeRetraite: "",
+      organismeRetraite: "CMR",
       numeroAffiliationRetraite: "",
       dateAffiliationRetraite: ""
     },
@@ -94,7 +96,8 @@ const New = () => {
     affectations: [
       {
         dateAffectation: "",
-        poste: ""
+        poste: "",
+        entite:"divisions"
       }
     ],
     sanctions: [
@@ -114,7 +117,7 @@ const New = () => {
             type:"",
             sousDossier: 
          {
-            nomSousDoussier: ""
+            nomSousDoussier: "Dossier_Divers"
          }
         }
      ]
@@ -198,6 +201,18 @@ const New = () => {
 
 
   const handleSubmit = async (e) => {
+   /* if ((formData.infoRetraite.organismeRetraite )=== "") {
+      alert("Veuillez sélectionner un organisme de retraite.");
+      return;
+    }
+    || formData.sexe 
+    affectation.entite
+    document.sousDossier?.nomSousDossier
+    formData.infoPrevoyanceSociale.organismePrevoyanceSociale
+    formData.infoAdministratives.situationAdministrative
+
+  formData.infoFamiliales.situationFamiliale*/
+
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:8080/api/info/add', formData);
@@ -218,9 +233,9 @@ const New = () => {
         <div className='bottom'>
           <form className="row g-3" onSubmit={handleSubmit}>
           <h1 className="text-center mb-4">Ajouter un nouveau utilisateur</h1>
-            <h1 className='title'>Information Personnelle:</h1>
+            <h1 className='title text-primary'>Information Personnelle:</h1>
             <div className="col-md-4">
-              <label className="form-label">Prénom:</label>
+              <label className="form-label ">Prénom:</label>
               <input className="form-control" type="text" name="prenom" value={formData.prenom} onChange={handleInputChange} />
             </div>
             <div className="col-md-4">
@@ -262,7 +277,7 @@ const New = () => {
 
             {/* Informations Familiales */}
 
-            <h1 className='title'>Informations Familiales:</h1>
+            <h1 className='title text-primary'>Informations Familiales:</h1>
             <div className="col-md-4">
               <label className="form-label">Nom de père :</label>
               <input className="form-control" type="text" name="infoFamiliales.nomPere" value={formData.infoFamiliales.nomPere} onChange={handleInputChange} />
@@ -305,23 +320,23 @@ const New = () => {
               <input className="form-control" type="text" name="infoFamiliales.nombreEnfants" value={formData.infoFamiliales.nombreEnfants} onChange={handleInputChange} />
             </div>
 
-            <h1 className='title'>Les Conjoints:</h1>
+            <h1 className='title text-primary'>Les Conjoints:</h1>
             {formData.infoFamiliales.conjoints.map((conjoint, index) => (
               <div key={index} className="row mb-3">
                 <div className="col-md-2">
-                  <label className="form-label text-primary small">CIN du Conjoint {index + 1} :</label>
+                  <label className="form-label text-warning small">CIN du Conjoint {index + 1} :</label>
                   <input className="form-control" type="text" name="cinConjoint" value={conjoint.cinConjoint} onChange={(e) => handleArrayChangeFam(index, "conjoints", e)} />
                 </div>
                 <div className="col-md-2">
-                  <label className="form-label text-primary small">Date de Mariage :</label>
+                  <label className="form-label text-warning small">Date de Mariage :</label>
                   <input className="form-control" type="date" name="dateMariage" value={conjoint.dateMariage} onChange={(e) => handleArrayChangeFam(index, "conjoints", e)} />
                 </div>
                 <div className="col-md-2">
-                  <label className="form-label text-primary small">Date de Divorce :</label>
+                  <label className="form-label text-warning small">Date de Divorce :</label>
                   <input className="form-control" type="date" name="dateDivorce" value={conjoint.dateDivorce} onChange={(e) => handleArrayChangeFam(index, "conjoints", e)} />
                 </div>
                 <div className="col-md-2">
-                  <label className="form-label text-primary small">Nom du Conjoint :</label>
+                  <label className="form-label text-warning small">Nom du Conjoint :</label>
                   <input className="form-control" type="text" name="nomConjoint" value={conjoint.nomConjoint} onChange={(e) => handleArrayChangeFam(index, "conjoints", e)} />
                 </div>
                 <div className="col-md-2 d-flex align-items-end">
@@ -337,19 +352,19 @@ const New = () => {
 
 
             {/* Informations Familiales: Les Enfants */}
-            <h1 className='title'>Les Enfants:</h1>
+            <h1 className='title text-primary'>Les Enfants:</h1>
             {formData.infoFamiliales.enfants.map((enfant, index) => (
               <div key={index} className="row mb-3">
                 <div className="col-md-2">
-                  <label className="form-label text-primary small">Prénom de l'enfant :</label>
+                  <label className="form-label text-warning small">Prénom de l'enfant :</label>
                   <input className="form-control" type="text" name="prenom" value={enfant.prenom} onChange={(e) => handleArrayChangeFam(index, "enfants", e)} />
                 </div>
                 <div className="col-md-2">
-                  <label className="form-label text-primary small">Nom de la mère :</label>
+                  <label className="form-label text-warning small">Nom de la mère :</label>
                   <input className="form-control" type="text" name="nomMere" value={enfant.nomMere} onChange={(e) => handleArrayChangeFam(index, "enfants", e)} />
                 </div>
                 <div className="col-md-2">
-                  <label className="form-label text-primary small">Date de naissance :</label>
+                  <label className="form-label text-warning small">Date de naissance :</label>
                   <input className="form-control" type="date" name="dateNaissance" value={enfant.dateNaissance} onChange={(e) => handleArrayChangeFam(index, "enfants", e)} />
                 </div>
                 <div className="col-md-2 d-flex align-items-end">
@@ -369,7 +384,7 @@ const New = () => {
 
 
             {/* Informations Administratives */}
-            <h1 className='title'>Informations Administratives:</h1>
+            <h1 className='title text-primary'>Informations Administratives:</h1>
             <div class="col-md-4">
               <label class="form-label" >PPR :</label>
               <input class="form-control" type="text" name="infoAdministratives.ppr" value={formData.infoAdministratives.ppr} onChange={handleInputChange} />
@@ -426,7 +441,7 @@ const New = () => {
 
 
             {/* Informations de Prévoyance Sociale */}
-            <h1 className='title'>Informations de Prévoyance Sociale:</h1>
+            <h1 className='title text-primary'>Informations de Prévoyance Sociale:</h1>
             <div className="col-md-3">
               <label className="form-label">Organisme de prévoyance sociale :</label>
               <select className="form-select" name="infoPrevoyanceSociale.organismePrevoyanceSociale" value={formData.infoPrevoyanceSociale.organismePrevoyanceSociale} onChange={handleInputChange}>
@@ -449,7 +464,7 @@ const New = () => {
               <input class="form-control" type="date" name="infoPrevoyanceSociale.dateAffiliationCNOPS" value={formData.infoPrevoyanceSociale.dateAffiliationCNOPS} onChange={handleInputChange} />
             </div>
 
-            <h1 className='title'>Informations Sociales:</h1>
+            <h1 className='title text-primary'>Informations Sociales:</h1>
             <div className="row mb-3">
               <div className="col-md-4">
                 <label className="form-label ">Numéro d'affiliation Fondation Hassan II :</label>
@@ -457,7 +472,7 @@ const New = () => {
               </div>
             </div>
 
-            <h1 className='title'>Informations Retraite:</h1>
+            <h1 className='title text-primary'>Informations Retraite:</h1>
             <div className="row mb-3">
               <div className="col-md-4">
               <label className="form-label ">Organisme de retraite :</label>
@@ -477,7 +492,7 @@ const New = () => {
               </div>
             </div>
 
-            <h1 className='title'>Informations Assurance:</h1>
+            <h1 className='title text-primary'>Informations Assurance:</h1>
             <div className="row mb-3">
               <div className="col-md-4">
                 <label className="form-label ">Organisme d'assurance :</label>
@@ -491,7 +506,7 @@ const New = () => {
 
             {/* Sanctions */}
             <div className="details">
-              <h1 className='title'>Sanctions:</h1>
+              <h1 className='title text-primary'>Sanctions:</h1>
               {formData.sanctions.map((sanction, index) => (
                 <div key={index} className="row mb-3">
                   <div className="col-md-2">
@@ -524,7 +539,7 @@ const New = () => {
 
             {/* Diplômes */}
             <div className="details">
-              <h1 className='title'>Diplômes:</h1>
+              <h1 className='title text-primary'>Diplômes:</h1>
               {formData.diplomes.map((diplome, index) => (
                 <div key={index} className="row mb-3">
                    <div className="col-md-2">
@@ -557,7 +572,7 @@ const New = () => {
 
             {/* Mouvements */}
             <div className="details">
-              <h1 className='title'>Mouvements:</h1>
+              <h1 className='title text-primary'>Mouvements:</h1>
               {formData.mouvements.map((mouvement, index) => (
                 <div key={index} className="row mb-3">
                   <div className="col-md-3">
@@ -588,7 +603,7 @@ const New = () => {
 
             {/* Affectations */}
             <div className="details">
-              <h1 className='title'>Affectations:</h1>
+              <h1 className='title text-primary'>Affectations:</h1>
               {formData.affectations.map((affectation, index) => (
                 <div key={index} className="row mb-3">
                   <div className="col-md-3">
@@ -624,7 +639,7 @@ const New = () => {
             </div>
 
             <div className="details">
-              <h1 className='title'>Documents et pièces jointes:</h1>
+              <h1 className='title text-primary'>Documents et pièces jointes:</h1>
               {formData.documentsPiecesJointes.map((document, index) => (
                 <div key={index} className="row mb-3">
                   <div className="col-md-4">

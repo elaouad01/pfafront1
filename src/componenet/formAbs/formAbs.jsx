@@ -10,29 +10,35 @@ const FormAbs = () => {
 
   const { userId } = useParams();
 
-  const [user, setUser] = useState({
-    type: "",
+  const [formData, setFormData] = useState({
+    code: "",
+    datededepart: "",
+    cin:"",
     nbrjours: "",
     nbrjourdeduire: "",
-    nbrjournepasdeduire: ""
+    nbrjournepasdeduire: "",
+    type: "",
+    reliquat: "",
+    cinramplacant: "",
+    cumul: ""
   });
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
   useEffect(() => {
     loadUser();
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUser({
-      ...user,
-      [name]: value
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await axios.put(`http://localhost:8080/api/info/update/${userId}`, user);
+      const result = await axios.put(`http://localhost:8080/api/demandes/update/${userId}`, formData); // Updated URL for put request
       console.log(result.data);
       alert('Données mises à jour avec succès !');
       navigate("/Demandes/Absence");
@@ -44,8 +50,8 @@ const FormAbs = () => {
 
   const loadUser = async () => {
     try {
-      const result = await axios.get(`http://localhost:8080/api/info/displayById/${userId}`);
-      setUser(result.data);
+      const result = await axios.get(`http://localhost:8080/api/demandes/getByid/${userId}`); // Updated URL for get request
+       setFormData(result.data);
     } catch (error) {
       console.error('Erreur lors de la récupération des données:', error);
     }
@@ -57,28 +63,39 @@ const FormAbs = () => {
       <div className="newContainer">
         <Navbar />
         <div className='bottom'>
-          <form className="row g-1" onSubmit={handleSubmit}>
-            <h1 className="text-center mb-9">Modifier une demande d'absence</h1>
-            <div className="col-md-3">
-              <label className="form-label">Type :</label>
-              <input className="form-control" type="text" name="type" value={user.type} onChange={handleInputChange} />
-            </div>
-            <div className="col-md-3">
-              <label className="form-label">Nombre de jours :</label>
-              <input className="form-control" type="text" name="nbrjours" value={user.nbrjours} onChange={handleInputChange} />
-            </div>
-            <div className="col-md-3">
-              <label className="form-label">Nombre de jours à déduire :</label>
-              <input className="form-control" type="text" name="nbrjourdeduire" value={user.nbrjourdeduire} onChange={handleInputChange} />
-            </div>
-            <div className="col-md-3">
-              <label className="form-label">Nombre de jours à ne pas déduire :</label>
-              <input className="form-control" type="text" name="nbrjournepasdeduire" value={user.nbrjournepasdeduire} onChange={handleInputChange} />
-            </div>
-            <div className="text-center">
-              <button type="submit" className="btn btn-danger btn-lg">Modifier la demande d'absence </button>
-            </div>
-          </form>
+        <form className="row g-2" onSubmit={handleSubmit}>
+  <h1 className="text-center mb-9">Editer votre demande d'absence</h1>
+
+  <div className="col-md-3">
+    <label className="form-label">nbrjours :</label>
+    <input className="form-control" type="text" name="nbrjours" value={formData.nbrjours} onChange={handleInputChange} />
+  </div>
+  <div className="col-md-3">
+    <label className="form-label">Date de départ :</label>
+    <input className="form-control" type="date" name="datededepart" value={formData.datededepart} onChange={handleInputChange} />
+  </div>
+  <div className="col-md-3">
+    <label className="form-label">CIN du remplaçant :</label>
+    <input className="form-control" type="text" name="cinramplacant" value={formData.cinramplacant} onChange={handleInputChange} />
+  </div>
+
+  <div className="col-md-3">
+  <label className="form-label">type d'absence :</label>
+
+            <select className="form-select" name="type" value={formData.type} onChange={handleInputChange}>
+  <option value="">Select Type</option>
+  <option value="maladie">Maladie</option>
+  <option value="administatives">Administratives</option>
+  <option value="congenormal">Congé Normal</option>
+  <option value="exceptionnelle">Absence Exceptionnelle</option>
+  <option value="hajj">Hajj</option>
+</select>
+
+          </div>
+  <div className="text-center">
+    <button type="submit" className="btn btn-danger btn-lg"> confirmer  </button>
+  </div>
+</form>
         </div>
       </div>
     </div>

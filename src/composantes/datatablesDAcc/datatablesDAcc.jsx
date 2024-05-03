@@ -3,6 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Link, useNavigate } from "react-router-dom";
 import PreviewIcon from '@mui/icons-material/Preview';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import axios from 'axios';
 import { userColumns2 } from "../../datatablesource";
@@ -20,7 +21,7 @@ const DatatableAbs = () => {
 
   const fetchDemandes = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/demandes/getAll');
+      const response = await axios.get('http://localhost:8080/api/demandes/getDaccepted');
       if (response.data && Array.isArray(response.data) && response.data.length > 0) {
         setDemandes(response.data);
       }
@@ -37,9 +38,6 @@ const DatatableAbs = () => {
       }
     };
 
-  const handleEditDetails = (code) => {
-    navigate(`/Demandes/Absence/Edit/${code}`);
-  };
 
   const handleDelete = async (code) => {
     try {
@@ -55,8 +53,7 @@ const DatatableAbs = () => {
       field: "action",
       headerName: "Action",
       width: 200,
-      renderCell: (params) => {
-        return(
+      renderCell: (params) => (
         <div className="cellAction">
           <div className="viewButton" onClick={() => handleViewDetails(params.row.code)}>
             <PreviewIcon />
@@ -64,13 +61,9 @@ const DatatableAbs = () => {
           <div className="deleteButton" onClick={() => handleDelete(params.row.code)}>
             <DeleteIcon />
           </div>
-          <div className="editButton" onClick={() => handleEditDetails(params.row.code)}>
-            <ModeEditIcon />
-          </div>
         </div>
-      );
+      ),
     },
-  },
   ];
 
   if (loading) {
@@ -80,10 +73,7 @@ const DatatableAbs = () => {
   return (
     <div className="datatable">
       <div className="datatableTitle">
-        Liste des demandes d'absences :
-        <Link to="/Demandes/Absence/new" className="link">
-          <AddCommentIcon />
-        </Link>
+        Liste des demandes d'absences accepted:
       </div>
       <DataGrid
         className="datagrid"

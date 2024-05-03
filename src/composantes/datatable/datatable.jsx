@@ -24,17 +24,17 @@ const Datatable = () => {
     }
   };
 
-  const handleDelete = async(cin) => {
+  const handleDelete = async (cin) => {
     try {
       // Envoi de la requête DELETE à votre API backend
       await axios.delete(`http://localhost:8080/api/info/delete/${cin}`);
-  
+
       // Si la suppression dans la base de données réussit,
       // mise à jour de l'état local des données pour refléter le changement
       setData(data.filter((item) => item.cin !== cin));//cette ligne filtre les éléments de data pour supprimer celui dont la propriété cin correspond à la valeur passée en paramètre cin, puis met à jour l'état data avec le nouveau tableau filtré à l'aide de setData.
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
-    } 
+    }
   };
   const navigate = useNavigate();
 
@@ -54,10 +54,10 @@ const Datatable = () => {
       renderCell: (params) => {
         return (
           <div className="cellAction">
-          <div className="viewButton" onClick={() => handleViewDetails(params.row.cin)}>
+            <div className="viewButton" onClick={() => handleViewDetails(params.row.cin)}>
               <PreviewIcon />
             </div>
-            
+
             <div className="deleteButton"
               onClick={() => handleDelete(params.row.cin)}
             >
@@ -65,9 +65,9 @@ const Datatable = () => {
             </div>
 
             <div className="editButton" onClick={() => handleEditDetails(params.row.cin)}>
-            <ModeEditIcon />
+              <ModeEditIcon />
             </div>
-           
+
 
           </div>
         );
@@ -80,15 +80,16 @@ const Datatable = () => {
         Liste des utilisateurs:
         <Link to="/users/new" className="link"><PersonAddIcon /></Link>
       </div>
-      <DataGrid className="datagrid"//affiche les donnees dans une grille 
+      <DataGrid
+        className="datagrid"
         rows={data}
-        columns={userColumns.concat(actionColumn)} //les collonees a affiche sont usercolumns
-        getRowId={(row) => row.cin} // obtenir l'identifiant unique de chaque ligne de données dans la grille. Dans ce cas, l'identifiant unique est extrait du champ cin de l'objet de données de chaque ligne
-        pageSize={9} //Nombre d'éléments à afficher par page dans la grille
-        rowsPerPageOptions={[9]} //Options pour le nombre d'éléments par page. Dans ce cas, seulement l'option 9 est disponible
+        columns={userColumns.concat(actionColumn)}
+        getRowId={(row) => row.cin} // Utiliser cin comme identifiant unique de ligne
+        pageSize={9}
+        rowsPerPageOptions={[9]}
         checkboxSelection
       />
-  
+
     </div>
   );
 };

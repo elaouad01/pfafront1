@@ -59,13 +59,13 @@ export const Sidebar = () => {
           </li>
           <li>
            <CheckCircleIcon className='icon'/> 
-           <Link to="/users"  style={{ textDecoration: "none" }}>  
+           <Link to="/Demandes/Absence/DemandesAccpted"  style={{ textDecoration: "none" }}>  
             <span>Demandes acceptées</span>
            </Link>
           </li>
           <li>
            <CancelIcon className='icon'/> 
-           <Link to="/users"  style={{ textDecoration: "none" }}>  
+           <Link to="/Demandes/Absence/DemandesRefused"  style={{ textDecoration: "none" }}>  
             <span>Demandes refusées</span>
            </Link>
           </li>
